@@ -52,40 +52,36 @@ platform for the global gaming, entertainment, and hospitality sector.
 Search the web and produce SECTION 1 and SECTION 2 of a weekly briefing covering 
 {week_start} – {week_end}.
 
-STRICT OUTPUT RULES — failure to follow these will make the report unusable:
-- EXACTLY 4 stories per section. No more, no fewer.
-- EXACTLY 2 sentences per story body. No more.
-- Syntrii Angle: one short clause (max 20 words).
-- Source: publication name and URL only.
-- Clean HTML output only — no markdown, no preamble, no commentary.
-- Do NOT number stories or add any text outside the HTML structure below.
+OUTPUT RULES — these are hard limits, not guidelines:
+- EXACTLY 3 stories per section. Stop at 3. Do not write a 4th.
+- Each story body: ONE sentence only. Not two. Not three. ONE.
+- Syntrii Angle: ONE sentence, 15 words maximum. Count them.
+- Source: publication name and URL only. No extra text.
+- Output clean HTML only. No markdown. No preamble. No commentary. No section dividers.
+- Use <h2> for section titles, <h3> for story headlines.
 
-HTML structure for each story:
+HTML pattern — repeat exactly 3 times per section:
 <h3>[Headline]</h3>
-<p>[2 sentences max.]</p>
-<div class="angle"><strong>Syntrii Angle:</strong> [max 20 words]</div>
+<p>[ONE sentence.]</p>
+<div class="angle"><strong>Syntrii Angle:</strong> [15 words max]</div>
 <p class="source"><strong>Source:</strong> <a href="URL">Publication</a></p>
 
 ---
 
 ## SECTION 1 — PLATFORMS & PRODUCTS
-Search for:
-- Cashless gaming technology deployments globally
-- Loyalty, CRM, CDP platform moves: IGT, Everi, Konami, Aristocrat, NRT, Paysign, 
-  Sightline, Light & Wonder, Optimove
-- Angel Gaming, Walker Digital Table Systems (WDTS), Bally's, LGT — any news
-- Middleware/connector/integration layer vendors positioning in the gaming stack
-- AI in loyalty personalisation or gaming compliance
-- Australia 2028 cashless reform signals
+Search for the 3 most significant stories this week from:
+- Cashless gaming deployments: IGT, Everi, Aristocrat NRT, Konami, Paysign, Sightline, Acres
+- Loyalty/CRM/CDP: Xtremepush, Optimove, Light & Wonder, Angel Gaming, Bally's
+- Middleware or integration layer vendor moves
+- AI in gaming loyalty or compliance
+- Australia 2028 cashless reform
 
 ## SECTION 2 — STRATEGIC ADVISORY
-Search for:
-- AUSTRAC, ClubsNSW, NICC, AGCO regulatory updates
-- PAGCOR — licensing, AML, KYC, advertising, e-wallet rules
-- MAS Singapore, DICJ Macau, FATF AML/CTF updates
-- Mounties Group, Crown, Star, SkyCity operator news
-- Solaire, Okada, Marina Bay Sands, Melco operator news
-- G2E, ICE, ASEAN Gaming Summit conference news
+Search for the 3 most significant stories this week from:
+- AUSTRAC, ClubsNSW, NICC regulatory updates; Mounties Group news
+- PAGCOR licensing, AML, KYC, e-wallet rules; Solaire, Okada news
+- Star Entertainment, Crown, SkyCity operator news
+- FATF, MAS Singapore, DICJ Macau updates
 """
 
 
@@ -101,40 +97,39 @@ platform for the global gaming, entertainment, and hospitality sector.
 Search the web and produce SECTION 3 and SECTION 4 of a weekly briefing covering 
 {week_start} – {week_end}.
 
-STRICT OUTPUT RULES — failure to follow these will make the report unusable:
-- EXACTLY 4 stories in Section 3. No more, no fewer.
-- EXACTLY 2 sentences per story body. No more.
-- Syntrii Angle: one short clause (max 20 words).
-- Source: publication name and URL only.
-- Section 4: exactly 3 items, 2 sentences each — no sources needed.
-- Clean HTML output only — no markdown, no preamble, no commentary.
+OUTPUT RULES — these are hard limits, not guidelines:
+- EXACTLY 3 stories in Section 3. Stop at 3. Do not write a 4th.
+- Each story body: ONE sentence only. Not two. Not three. ONE.
+- Syntrii Angle: ONE sentence, 15 words maximum. Count them.
+- Source: publication name and URL only. No extra text.
+- Section 4: exactly 3 items. Each item: headline + ONE sentence angle + format label.
+- Output clean HTML only. No markdown. No preamble. No commentary.
+- Use <h2> for section titles, <h3> for story headlines.
+- Wrap ALL of Section 4 in <div class="velocity">...</div>
 
-HTML structure for each Section 3 story:
+Section 3 HTML pattern — repeat exactly 3 times:
 <h3>[Headline]</h3>
-<p>[2 sentences max.]</p>
-<div class="angle"><strong>Syntrii Angle:</strong> [max 20 words]</div>
+<p>[ONE sentence.]</p>
+<div class="angle"><strong>Syntrii Angle:</strong> [15 words max]</div>
 <p class="source"><strong>Source:</strong> <a href="URL">Publication</a></p>
 
-Section 4 must be wrapped in <div class="velocity">...</div>
-HTML structure for each Section 4 item:
+Section 4 HTML pattern — repeat exactly 3 times inside <div class="velocity">:
 <h3>[Story headline]</h3>
-<p>[Syntrii content angle — 2 sentences on how Matt or Laurent owns this narrative.]</p>
+<p>[ONE sentence on how Matt or Laurent owns this narrative.]</p>
 <p><strong>Format:</strong> [LinkedIn post / IAG article / client briefing note]</p>
 
 ---
 
 ## SECTION 3 — GROWTH & INNOVATION / VENTURES
-Search for:
-- Gaming technology M&A and venture funding — deals, multiples, consolidation signals
-- New IR market progress: Japan, Thailand, UAE, Saudi Arabia, Vietnam, South Korea
-- Digital wallets, biometric identity, embedded finance applied to gaming
-- Fintech or regtech vendors entering gaming compliance or loyalty
-- Retail loyalty, sports betting, or financial services innovations applicable to gaming
+Search for the 3 most significant stories this week from:
+- Gaming technology M&A and venture funding
+- New IR market progress: Japan, Thailand, UAE, Saudi Arabia, Vietnam
+- Digital wallets, biometrics, embedded finance in gaming
+- Fintech/regtech vendors entering gaming compliance or loyalty
 
 ## SECTION 4 — CONTENT VELOCITY SIGNALS
-Pick the 3 strongest stories from Sections 1–3 for Syntrii thought leadership.
-For each: headline, a 2-sentence content angle for Matt or Laurent, suggested format.
-Wrap entire section in <div class="velocity">...</div>
+Pick the 3 strongest stories across all sections for Syntrii thought leadership.
+Wrap in <div class="velocity">...</div>
 """
 
 # ─────────────────────────────────────────────
