@@ -46,90 +46,45 @@ def build_prompt_part1() -> str:
 
     return f"""
 Today is {week_end}. You are a senior intelligence analyst for Syntrii — a digital utility 
-platform purpose-built for the global gaming, entertainment, and hospitality sector. 
-Syntrii operates across three pillars: Platforms & Products, Strategic Advisory, and 
-Growth & Innovation.
+platform for the global gaming, entertainment, and hospitality sector.
 
-Search the web and produce the FIRST HALF of a weekly intelligence briefing covering 
-the past 7 days ({week_start} – {week_end}).
+Search the web and produce SECTION 1 and SECTION 2 of a weekly briefing covering 
+{week_start} – {week_end}.
 
-This call covers SECTION 1 and SECTION 2 only. Cover the most significant 4–5 stories 
-per section. For each story write 2–3 concise sentences, a Source URL, and a 
-"Syntrii Angle" — one line on commercial or strategic relevance to Syntrii's pipeline 
-(Mounties Group AU, Solaire Philippines, Angel Gaming, Okada, Bally's Corporation) 
-or platform positioning.
+STRICT OUTPUT RULES — failure to follow these will make the report unusable:
+- EXACTLY 4 stories per section. No more, no fewer.
+- EXACTLY 2 sentences per story body. No more.
+- Syntrii Angle: one short clause (max 20 words).
+- Source: publication name and URL only.
+- Clean HTML output only — no markdown, no preamble, no commentary.
+- Do NOT number stories or add any text outside the HTML structure below.
+
+HTML structure for each story:
+<h3>[Headline]</h3>
+<p>[2 sentences max.]</p>
+<div class="angle"><strong>Syntrii Angle:</strong> [max 20 words]</div>
+<p class="source"><strong>Source:</strong> <a href="URL">Publication</a></p>
 
 ---
 
 ## SECTION 1 — PLATFORMS & PRODUCTS
-*Competitive and technology intelligence to keep Syntrii's platform relevant and defensible.*
-
-Search for and cover:
-- Cashless gaming technology deployments globally — who is going live, with what vendor, 
-  in which jurisdiction
-- Loyalty, CRM, and CDP platform moves: new features, partnerships, client wins/losses.
-  Focus vendors: Konami (SYNKROS/SynkVision), IGT, Everi, Scientific Games, NRT, 
-  Aristocrat, Paysign, Sightline, Actenum, Optimove, Salesforce Gaming
-- Global gaming technology vendor landscape — track moves from all of the following:
-    · Angel Gaming — smart table technology, middleware, connector layer deployments,
-      any new operator wins, product launches, or partnership announcements
-    · Walker Digital Table Systems (WDTS) — table game technology, any licensing deals,
-      new deployments, acquisition interest, or patent activity
-    · Light & Wonder (formerly Scientific Games) — systems division, OpenGaming platform,
-      loyalty and cashless moves, any operator wins or losses
-    · Konami Gaming — SYNKROS, SynkVision, SYNK31, Money Klip; new installs, 
-      product announcements, or operator contract news
-    · Aristocrat Technologies — NRT cashless, loyalty platform, systems acquisitions,
-      any moves into the digital utility or middleware space
-    · Everi Holdings — digital, fintech, loyalty and cashless wallet moves, 
-      any M&A or partnership activity
-    · IGT (International Game Technology) — resort wallet, loyalty, systems news,
-      any operator wins or product developments
-    · Bally's Corporation — technology platform, digital integration, loyalty stack,
-      any systems vendor relationships, procurement news, or tech transformation updates
-    · LGT (Lightning Gaming Technologies) — any product launches, partnership news,
-      or operator deployments
-    · Any emerging or challenger vendors positioning in the connector/middleware layer —
-      this is Syntrii's core territory; flag any vendor claiming to be the "integration 
-      layer" or "digital utility" between gaming systems
-- Middleware, connector, and integration layer announcements — who is positioning as the 
-  connective tissue between GMS, loyalty, payments, and compliance systems
-- Blockchain, digital identity, and wallet technology in regulated gaming environments
-- AI and machine learning applications in loyalty personalisation, player development, 
-  or gaming compliance
-- Australia 2028 reform implementation signals — regulator guidance, vendor certification 
-  news, club procurement decisions
-
----
+Search for:
+- Cashless gaming technology deployments globally
+- Loyalty, CRM, CDP platform moves: IGT, Everi, Konami, Aristocrat, NRT, Paysign, 
+  Sightline, Light & Wonder, Optimove
+- Angel Gaming, Walker Digital Table Systems (WDTS), Bally's, LGT — any news
+- Middleware/connector/integration layer vendors positioning in the gaming stack
+- AI in loyalty personalisation or gaming compliance
+- Australia 2028 cashless reform signals
 
 ## SECTION 2 — STRATEGIC ADVISORY
-*Regulatory, operator, and policy intelligence to keep Syntrii credible and ahead of clients.*
-
-Search for and cover:
-- Regulatory announcements and consultations:
-  Australia: AUSTRAC, NICC (NSW Independent Casino Commission), ClubsNSW, AGCO, 
-  state gaming regulators, Responsible Gambling reforms
-  Philippines: PAGCOR — new regulations, licensing, AML enforcement
-  Asia-Pacific: MAS Singapore, DICJ Macau, any new IR regulatory frameworks
-  Global: FATF AML/CTF updates, KYC/CDD obligations, responsible gambling technology mandates
-- Operator news — strategy, results, leadership, technology investments:
-  Australia: Mounties Group, Crown, Star, SkyCity, ALH Group
-  Southeast Asia: Solaire, Okada, Marina Bay Sands, Resorts World Sentosa, Melco
-  Global: MGM, Wynn, Las Vegas Sands, Hard Rock, Bally's Corporation
-- Industry editorial and thought leadership worth noting:
-  Inside Asian Gaming, GamblingInsider, CalvinAyre, Club Management Australia
-- Conference and event intelligence: G2E, ICE, ASEAN Gaming Summit, ClubsNSW Annual
-
----
-
-FORMAT INSTRUCTIONS:
-- Output clean HTML only — no markdown, no code fences
-- Use <h2> for section headers, <h3> for story headlines
-- Wrap each story's Syntrii Angle in: <div class="angle"><strong>Syntrii Angle:</strong> ...</div>
-- Wrap each Source in: <p class="source"><strong>Source:</strong> <a href="URL">Publication Name</a></p>
-- Target 4–5 stories per section — quality over volume
-- Be concise and commercial — this is for a CCO and CEO, not an academic
-- Do NOT include any header, footer, or preamble — output the two section blocks only
+Search for:
+- AUSTRAC, ClubsNSW, NICC, AGCO regulatory updates
+- PAGCOR — licensing, AML, KYC, advertising, e-wallet rules
+- MAS Singapore, DICJ Macau, FATF AML/CTF updates
+- Mounties Group, Crown, Star, SkyCity operator news
+- Solaire, Okada, Marina Bay Sands, Melco operator news
+- G2E, ICE, ASEAN Gaming Summit conference news
 """
 
 
@@ -140,62 +95,45 @@ def build_prompt_part2() -> str:
 
     return f"""
 Today is {week_end}. You are a senior intelligence analyst for Syntrii — a digital utility 
-platform purpose-built for the global gaming, entertainment, and hospitality sector. 
-Syntrii operates across three pillars: Platforms & Products, Strategic Advisory, and 
-Growth & Innovation.
+platform for the global gaming, entertainment, and hospitality sector.
 
-Search the web and produce the SECOND HALF of a weekly intelligence briefing covering 
-the past 7 days ({week_start} – {week_end}).
+Search the web and produce SECTION 3 and SECTION 4 of a weekly briefing covering 
+{week_start} – {week_end}.
 
-This call covers SECTION 3 and SECTION 4 only. Cover the most significant 4–5 stories 
-in Section 3. For each story write 2–3 concise sentences, a Source URL, and a 
-"Syntrii Angle" — one line on commercial or strategic relevance to Syntrii's pipeline 
-(Mounties Group AU, Solaire Philippines, Angel Gaming, Okada, Bally's Corporation) 
-or platform positioning.
+STRICT OUTPUT RULES — failure to follow these will make the report unusable:
+- EXACTLY 4 stories in Section 3. No more, no fewer.
+- EXACTLY 2 sentences per story body. No more.
+- Syntrii Angle: one short clause (max 20 words).
+- Source: publication name and URL only.
+- Section 4: exactly 3 items, 2 sentences each — no sources needed.
+- Clean HTML output only — no markdown, no preamble, no commentary.
+
+HTML structure for each Section 3 story:
+<h3>[Headline]</h3>
+<p>[2 sentences max.]</p>
+<div class="angle"><strong>Syntrii Angle:</strong> [max 20 words]</div>
+<p class="source"><strong>Source:</strong> <a href="URL">Publication</a></p>
+
+Section 4 must be wrapped in <div class="velocity">...</div>
+HTML structure for each Section 4 item:
+<h3>[Story headline]</h3>
+<p>[Syntrii content angle — 2 sentences on how Matt or Laurent owns this narrative.]</p>
+<p><strong>Format:</strong> [LinkedIn post / IAG article / client briefing note]</p>
 
 ---
 
 ## SECTION 3 — GROWTH & INNOVATION / VENTURES
-*Deal flow, emerging technology, and market entry signals.*
-
-Search for and cover:
-- Gaming technology M&A and venture funding — who is raising, who is being acquired, 
-  at what multiples, and what it signals about sector consolidation
-- New market openings and IR licensing progress: Japan, Thailand, UAE, Saudi Arabia, 
-  Vietnam, South Korea — any regulatory milestones or operator announcements
-- Emerging technology moves relevant to Syntrii's roadmap: digital wallets, biometric 
-  identity, embedded finance, open banking applied to gaming
-- Adjacent sector entrants: fintech, regtech, or identity verification vendors making 
-  moves into the gaming compliance or loyalty space
-- Innovation from non-gaming sectors with direct applicability: what is retail loyalty, 
-  sports betting, or financial services doing that gaming hasn't adopted yet?
-- Potential partnership or acquisition targets that could strengthen Syntrii's platform 
-  or accelerate market entry
-
----
+Search for:
+- Gaming technology M&A and venture funding — deals, multiples, consolidation signals
+- New IR market progress: Japan, Thailand, UAE, Saudi Arabia, Vietnam, South Korea
+- Digital wallets, biometric identity, embedded finance applied to gaming
+- Fintech or regtech vendors entering gaming compliance or loyalty
+- Retail loyalty, sports betting, or financial services innovations applicable to gaming
 
 ## SECTION 4 — CONTENT VELOCITY SIGNALS
-*The top 3 stories from Sections 1–3 that represent the strongest opportunity for 
-Syntrii thought leadership — a LinkedIn post, IAG article pitch, or client briefing hook.*
-
-For each, provide:
-- The story headline
-- A suggested Syntrii content angle (1–2 sentences on how Matt or Laurent could own 
-  the narrative from a platform or advisory perspective)
-- Suggested format: LinkedIn post / IAG article / client briefing note
-
-Wrap Section 4 in: <div class="velocity">...</div>
-
----
-
-FORMAT INSTRUCTIONS:
-- Output clean HTML only — no markdown, no code fences
-- Use <h2> for section headers, <h3> for story headlines
-- Wrap each story's Syntrii Angle in: <div class="angle"><strong>Syntrii Angle:</strong> ...</div>
-- Wrap each Source in: <p class="source"><strong>Source:</strong> <a href="URL">Publication Name</a></p>
-- Target 4–5 stories in Section 3, 3 items in Section 4
-- Be concise and commercial — this is for a CCO and CEO, not an academic
-- Do NOT include any header, footer, or preamble — output the two section blocks only
+Pick the 3 strongest stories from Sections 1–3 for Syntrii thought leadership.
+For each: headline, a 2-sentence content angle for Matt or Laurent, suggested format.
+Wrap entire section in <div class="velocity">...</div>
 """
 
 # ─────────────────────────────────────────────
