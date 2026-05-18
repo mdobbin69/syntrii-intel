@@ -24,7 +24,7 @@ from email.mime.text import MIMEText
 
 RECIPIENT_EMAILS = [
     "matt@syntrii.com",
-    # "laurent@syntrii.com",  # uncomment to add Laurent
+    "laurent@syntrii.com",
 ]
 
 SENDER_EMAIL    = os.environ.get("DIGEST_SENDER_EMAIL")    # e.g. digest@gmail.com
@@ -52,10 +52,11 @@ Growth & Innovation.
 Search the web and produce a structured WEEKLY intelligence briefing covering the past 
 7 days ({week_start} – {week_end}). 
 
-The report has four sections. Cover the most significant 4–5 stories per section. 
+The report has four sections. Cover the most significant 5–6 stories per section. 
 For each story write 2–3 concise sentences, a Source URL, and a "Syntrii Angle" — 
 one line on commercial or strategic relevance to Syntrii's pipeline 
-(Mounties Group AU, Solaire Philippines, Angel Gaming, Okada) or platform positioning.
+(Mounties Group AU, Solaire Philippines, Angel Gaming, Okada, Bally's Corporation) 
+or platform positioning.
 
 ---
 
@@ -65,11 +66,33 @@ one line on commercial or strategic relevance to Syntrii's pipeline
 Search for and cover:
 - Cashless gaming technology deployments globally — who is going live, with what vendor, 
   in which jurisdiction
-- Loyalty, CRM, and CDP platform moves: new features, partnerships, client wins/losses
-  Focus vendors: Konami, IGT, Everi, Scientific Games, NRT, Aristocrat, Paysign, Sightline, 
-  Actenum, Optimove, Salesforce Gaming
-- Middleware, connector, and integration layer announcements — any vendor positioning 
-  as the "connective tissue" between gaming systems (this is Syntrii's territory)
+- Loyalty, CRM, and CDP platform moves: new features, partnerships, client wins/losses.
+  Focus vendors: Konami (SYNKROS/SynkVision), IGT, Everi, Scientific Games, NRT, 
+  Aristocrat, Paysign, Sightline, Actenum, Optimove, Salesforce Gaming
+- Global gaming technology vendor landscape — track moves from all of the following:
+    · Angel Gaming — smart table technology, middleware, connector layer deployments,
+      any new operator wins, product launches, or partnership announcements
+    · Walker Digital Table Systems (WDTS) — table game technology, any licensing deals,
+      new deployments, acquisition interest, or patent activity
+    · Light & Wonder (formerly Scientific Games) — systems division, OpenGaming platform,
+      loyalty and cashless moves, any operator wins or losses
+    · Konami Gaming — SYNKROS, SynkVision, SYNK31, Money Klip; new installs, 
+      product announcements, or operator contract news
+    · Aristocrat Technologies — NRT cashless, loyalty platform, systems acquisitions,
+      any moves into the digital utility or middleware space
+    · Everi Holdings — digital, fintech, loyalty and cashless wallet moves, 
+      any M&A or partnership activity
+    · IGT (International Game Technology) — resort wallet, loyalty, systems news,
+      any operator wins or product developments
+    · Bally's Corporation — technology platform, digital integration, loyalty stack,
+      any systems vendor relationships, procurement news, or tech transformation updates
+    · LGT (Lightning Gaming Technologies) — any product launches, partnership news,
+      or operator deployments
+    · Any emerging or challenger vendors positioning in the connector/middleware layer —
+      this is Syntrii's core territory; flag any vendor claiming to be the "integration 
+      layer" or "digital utility" between gaming systems
+- Middleware, connector, and integration layer announcements — who is positioning as the 
+  connective tissue between GMS, loyalty, payments, and compliance systems
 - Blockchain, digital identity, and wallet technology in regulated gaming environments
 - AI and machine learning applications in loyalty personalisation, player development, 
   or gaming compliance
@@ -91,7 +114,7 @@ Search for and cover:
 - Operator news — strategy, results, leadership, technology investments:
   Australia: Mounties Group, Crown, Star, SkyCity, ALH Group
   Southeast Asia: Solaire, Okada, Marina Bay Sands, Resorts World Sentosa, Melco
-  Global: MGM, Wynn, Las Vegas Sands, Hard Rock
+  Global: MGM, Wynn, Las Vegas Sands, Hard Rock, Bally's Corporation
 - Industry editorial and thought leadership worth noting:
   Inside Asian Gaming, GamblingInsider, CalvinAyre, Club Management Australia
 - Conference and event intelligence: G2E, ICE, ASEAN Gaming Summit, ClubsNSW Annual
@@ -134,7 +157,7 @@ FORMAT INSTRUCTIONS:
 - Use <h2> for section headers, <h3> for story headlines
 - Wrap each story's Syntrii Angle in: <div class="angle"><strong>Syntrii Angle:</strong> ...</div>
 - Wrap each Source in: <p class="source"><strong>Source:</strong> <a href="URL">Publication Name</a></p>
-- Keep the total report to the top 18–20 most significant stories across all sections
+- Keep the total report to the top 22–25 most significant stories across all sections
 - Be concise and commercial — this is for a CCO and CEO, not an academic
 """
 
@@ -147,7 +170,7 @@ def fetch_digest() -> str:
 
     response = client.messages.create(
         model="claude-sonnet-4-6",
-        max_tokens=6000,
+        max_tokens=8000,
         tools=[{"type": "web_search_20250305", "name": "web_search"}],
         messages=[{"role": "user", "content": build_prompt()}],
     )
@@ -333,7 +356,7 @@ if __name__ == "__main__":
 #
 # ─────────────────────────────────────────────────────────
 # ESTIMATED COST
-#   ~$0.20–0.40 per run (more searches, larger output)
+#   ~$0.25–0.50 per run (more searches, larger output)
 #   ~$1–2/month total
 #   GitHub Actions: free on private repos (2,000 mins/month)
 # ─────────────────────────────────────────────────────────
