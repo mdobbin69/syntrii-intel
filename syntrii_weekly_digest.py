@@ -12,6 +12,7 @@ Setup instructions at the bottom of this file.
 """
 
 import anthropic
+import time
 import smtplib
 import os
 from datetime import date, timedelta
@@ -164,6 +165,9 @@ def fetch_section(prompt: str) -> str:
 def fetch_digest() -> str:
     print("  → Researching Sections 1 & 2 (Platforms, Advisory)...")
     part1 = fetch_section(build_prompt_part1())
+
+    print("  → Waiting 65 seconds to respect API rate limits...")
+    time.sleep(65)
 
     print("  → Researching Sections 3 & 4 (Growth, Content Velocity)...")
     part2 = fetch_section(build_prompt_part2())
