@@ -52,7 +52,7 @@ Growth & Innovation.
 Search the web and produce a structured WEEKLY intelligence briefing covering the past 
 7 days ({week_start} – {week_end}). 
 
-The report has four sections. Cover the most significant 5–6 stories per section. 
+The report has four sections. Cover the most significant 4–5 stories per section. 
 For each story write 2–3 concise sentences, a Source URL, and a "Syntrii Angle" — 
 one line on commercial or strategic relevance to Syntrii's pipeline 
 (Mounties Group AU, Solaire Philippines, Angel Gaming, Okada, Bally's Corporation) 
@@ -157,7 +157,8 @@ FORMAT INSTRUCTIONS:
 - Use <h2> for section headers, <h3> for story headlines
 - Wrap each story's Syntrii Angle in: <div class="angle"><strong>Syntrii Angle:</strong> ...</div>
 - Wrap each Source in: <p class="source"><strong>Source:</strong> <a href="URL">Publication Name</a></p>
-- Keep the total report to the top 22–25 most significant stories across all sections
+- Keep the total report to the top 18–20 most significant stories across all sections
+- Target 4–5 stories per section — quality over volume
 - Be concise and commercial — this is for a CCO and CEO, not an academic
 """
 
@@ -170,8 +171,12 @@ def fetch_digest() -> str:
 
     response = client.messages.create(
         model="claude-sonnet-4-6",
-        max_tokens=8000,
-        tools=[{"type": "web_search_20250305", "name": "web_search"}],
+        max_tokens=16000,                          # increased from 8000 to prevent truncation
+        tools=[{
+            "type": "web_search_20250305",
+            "name": "web_search",
+            "max_uses": 25,                        # allows thorough research across all pillars
+        }],
         messages=[{"role": "user", "content": build_prompt()}],
     )
 
@@ -356,7 +361,7 @@ if __name__ == "__main__":
 #
 # ─────────────────────────────────────────────────────────
 # ESTIMATED COST
-#   ~$0.25–0.50 per run (more searches, larger output)
-#   ~$1–2/month total
+#   ~$0.40–0.70 per run (more searches, larger output budget)
+#   ~$1.50–3/month total
 #   GitHub Actions: free on private repos (2,000 mins/month)
 # ─────────────────────────────────────────────────────────
