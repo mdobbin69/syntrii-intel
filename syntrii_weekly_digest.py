@@ -192,27 +192,41 @@ Now produce:
 # API HELPERS
 # ─────────────────────────────────────────────
 
+def api_call_with_retry(create_fn, max_retries: int = 5) -> str:
+    """Call the Anthropic API, retrying with backoff on rate limit errors."""
+    wait = 65
+    for attempt in range(max_retries):
+        try:
+            response = create_fn()
+            return "".join(b.text for b in response.content if b.type == "text")
+        except anthropic.RateLimitError:
+            if attempt < max_retries - 1:
+                print(f"  -> Rate limit hit. Waiting {wait} seconds before retry...")
+                time.sleep(wait)
+                wait += 30
+            else:
+                raise
+
+
 def research(prompt: str) -> str:
     """Call with web search enabled — returns raw intel text."""
     client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
-    response = client.messages.create(
+    return api_call_with_retry(lambda: client.messages.create(
         model="claude-sonnet-4-6",
         max_tokens=4000,
         tools=[{"type": "web_search_20250305", "name": "web_search"}],
         messages=[{"role": "user", "content": prompt}],
-    )
-    return "".join(b.text for b in response.content if b.type == "text")
+    ))
 
 
 def write_html(prompt: str) -> str:
     """Call with no tools — pure HTML writing from provided research."""
     client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
-    response = client.messages.create(
+    return api_call_with_retry(lambda: client.messages.create(
         model="claude-sonnet-4-6",
         max_tokens=4000,
         messages=[{"role": "user", "content": prompt}],
-    )
-    return "".join(b.text for b in response.content if b.type == "text")
+    ))
 
 
 # ─────────────────────────────────────────────
