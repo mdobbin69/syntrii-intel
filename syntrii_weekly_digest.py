@@ -8,12 +8,19 @@ A single aggregated weekly report covering all three Syntrii pillars:
 
 Delivered every Monday morning (AEST) via email.
 
+Architecture (Tier 2 API):
+  Call 1 — Research Sections 1 & 2 (web search, raw intel)
+  Call 2 — Write Sections 1 & 2 HTML (no web search)
+  Call 3 — Research Sections 3 & 4 (web search, raw intel)
+  Call 4 — Write Sections 3 & 4 HTML (no web search)
+
 Setup instructions at the bottom of this file.
 """
 
 import anthropic
 import smtplib
 import os
+import time
 from datetime import date, timedelta
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -24,140 +31,232 @@ from email.mime.text import MIMEText
 
 RECIPIENT_EMAILS = [
     "matt@syntrii.com",
-    "laurent@syntrii.com",  
+    "laurent@syntrii.com",
 ]
 
-SENDER_EMAIL    = os.environ.get("DIGEST_SENDER_EMAIL")    # e.g. digest@gmail.com
-SENDER_PASSWORD = os.environ.get("DIGEST_SENDER_PASSWORD") # Gmail App Password
+SENDER_EMAIL    = os.environ.get("DIGEST_SENDER_EMAIL")
+SENDER_PASSWORD = os.environ.get("DIGEST_SENDER_PASSWORD")
 SMTP_HOST       = "smtp.gmail.com"
 SMTP_PORT       = 587
 
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
 
 # ─────────────────────────────────────────────
-# RESEARCH PROMPT
+# RESEARCH PROMPTS — web search, raw intel output
 # ─────────────────────────────────────────────
 
-def build_prompt() -> str:
+def build_research_prompt_part1() -> str:
     today      = date.today()
     week_start = (today - timedelta(days=7)).strftime("%B %d")
     week_end   = today.strftime("%B %d, %Y")
 
     return f"""
 Today is {week_end}. You are a senior intelligence analyst for Syntrii — a digital utility 
-platform purpose-built for the global gaming, entertainment, and hospitality sector. 
-Syntrii operates across three pillars: Platforms & Products, Strategic Advisory, and 
-Growth & Innovation.
+platform purpose-built for the global gaming, entertainment, and hospitality sector.
+Syntrii's key clients and pipeline: Mounties Group AU, Solaire Philippines, Okada Manila, 
+Angel Gaming, Bally's Corporation.
 
-Search the web and produce a structured WEEKLY intelligence briefing covering the past 
-7 days ({week_start} – {week_end}). 
+Search the web and gather the most significant news from {week_start} – {week_end} 
+across the following topics. Output raw research notes — bullet points, no HTML.
+Find 5 strong stories per topic area. Include source name and URL for each story.
 
-The report has four sections. Cover the most significant 4–5 stories per section. 
-For each story write 2–3 concise sentences, a Source URL, and a "Syntrii Angle" — 
-one line on commercial or strategic relevance to Syntrii's pipeline 
-(Mounties Group AU, Solaire Philippines, Angel Gaming, Okada) or platform positioning.
+TOPIC A — PLATFORMS & PRODUCTS:
+- Cashless gaming technology deployments globally: IGT, Everi, Aristocrat NRT, Konami 
+  Money Klip, Paysign, Sightline, Acres Manufacturing — who is going live, where, with what
+- Loyalty, CRM, and CDP platform moves: Xtremepush, Optimove, Light & Wonder, Fast Track,
+  Salesforce Gaming — new features, partnerships, operator wins/losses
+- Vendor landscape: Angel Gaming, Walker Digital Table Systems (WDTS), Bally's Corporation,
+  LGT — any product launches, operator wins, partnership announcements
+- Middleware and integration layer: any vendor positioning as the connective tissue between
+  GMS, loyalty, payments, and compliance systems
+- AI applied to gaming loyalty personalisation, player development, or compliance
+- Australia 2028 cashless reform: regulator guidance, vendor certification, club procurement
 
----
+TOPIC B — STRATEGIC ADVISORY:
+- AUSTRAC regulatory updates, enforcement actions, AML/CTF reform implementation
+- Mounties Group — any news related to AUSTRAC proceedings or compliance
+- ClubsNSW, NICC, state gaming regulators — policy announcements
+- PAGCOR — licensing, AML enforcement, KYC rules, e-wallet decisions, advertising bans
+- Solaire Resort, Okada Manila — strategy, results, technology investments, compliance moves
+- Star Entertainment, Crown, SkyCity — governance, results, regulatory news
+- FATF AML/CTF updates, MAS Singapore, DICJ Macau — any new IR frameworks
+- G2E Asia, ICE, ASEAN Gaming Summit — conference news and announcements
+"""
 
-## SECTION 1 — PLATFORMS & PRODUCTS
-*Competitive and technology intelligence to keep Syntrii's platform relevant and defensible.*
 
-Search for and cover:
-- Cashless gaming technology deployments globally — who is going live, with what vendor, 
-  in which jurisdiction
-- Loyalty, CRM, and CDP platform moves: new features, partnerships, client wins/losses
-  Focus vendors: Konami, IGT, Everi, Scientific Games, NRT, Aristocrat, Paysign, Sightline, 
-  Actenum, Optimove, Salesforce Gaming
-- Middleware, connector, and integration layer announcements — any vendor positioning 
-  as the "connective tissue" between gaming systems (this is Syntrii's territory)
-- Blockchain, digital identity, and wallet technology in regulated gaming environments
-- AI and machine learning applications in loyalty personalisation, player development, 
-  or gaming compliance
-- Australia 2028 reform implementation signals — regulator guidance, vendor certification 
-  news, club procurement decisions
+def build_research_prompt_part2() -> str:
+    today      = date.today()
+    week_start = (today - timedelta(days=7)).strftime("%B %d")
+    week_end   = today.strftime("%B %d, %Y")
 
----
+    return f"""
+Today is {week_end}. You are a senior intelligence analyst for Syntrii — a digital utility 
+platform purpose-built for the global gaming, entertainment, and hospitality sector.
+Syntrii's key clients and pipeline: Mounties Group AU, Solaire Philippines, Okada Manila, 
+Angel Gaming, Bally's Corporation.
 
-## SECTION 2 — STRATEGIC ADVISORY
-*Regulatory, operator, and policy intelligence to keep Syntrii credible and ahead of clients.*
+Search the web and gather the most significant news from {week_start} – {week_end} 
+across the following topics. Output raw research notes — bullet points, no HTML.
+Find 5 strong stories per topic area. Include source name and URL for each story.
 
-Search for and cover:
-- Regulatory announcements and consultations:
-  Australia: AUSTRAC, NICC (NSW Independent Casino Commission), ClubsNSW, AGCO, 
-  state gaming regulators, Responsible Gambling reforms
-  Philippines: PAGCOR — new regulations, licensing, AML enforcement
-  Asia-Pacific: MAS Singapore, DICJ Macau, any new IR regulatory frameworks
-  Global: FATF AML/CTF updates, KYC/CDD obligations, responsible gambling technology mandates
-- Operator news — strategy, results, leadership, technology investments:
-  Australia: Mounties Group, Crown, Star, SkyCity, ALH Group
-  Southeast Asia: Solaire, Okada, Marina Bay Sands, Resorts World Sentosa, Melco
-  Global: MGM, Wynn, Las Vegas Sands, Hard Rock
-- Industry editorial and thought leadership worth noting:
-  Inside Asian Gaming, GamblingInsider, CalvinAyre, Club Management Australia
-- Conference and event intelligence: G2E, ICE, ASEAN Gaming Summit, ClubsNSW Annual
-
----
-
-## SECTION 3 — GROWTH & INNOVATION / VENTURES
-*Deal flow, emerging technology, and market entry signals.*
-
-Search for and cover:
-- Gaming technology M&A and venture funding — who is raising, who is being acquired, 
+TOPIC C — GROWTH & INNOVATION / VENTURES:
+- Gaming technology M&A and venture funding — who is raising, who is being acquired,
   at what multiples, and what it signals about sector consolidation
-- New market openings and IR licensing progress: Japan, Thailand, UAE, Saudi Arabia, 
-  Vietnam, South Korea — any regulatory milestones or operator announcements
-- Emerging technology moves relevant to Syntrii's roadmap: digital wallets, biometric 
-  identity, embedded finance, open banking applied to gaming
-- Adjacent sector entrants: fintech, regtech, or identity verification vendors making 
-  moves into the gaming compliance or loyalty space
-- Innovation from non-gaming sectors with direct applicability: what is retail loyalty, 
-  sports betting, or financial services doing that gaming hasn't adopted yet?
-- Potential partnership or acquisition targets that could strengthen Syntrii's platform 
-  or accelerate market entry
+- New IR market openings: Japan, Thailand, UAE, Saudi Arabia, Vietnam, South Korea —
+  regulatory milestones, operator announcements, licensing progress
+- Emerging technology: digital wallets, biometric identity, embedded finance, open banking
+  applied to gaming environments
+- Adjacent sector entrants: fintech, regtech, or identity verification vendors moving into
+  gaming compliance or loyalty
+- Innovation from retail loyalty, sports betting, or financial services applicable to gaming
+- Potential partnership or acquisition targets relevant to Syntrii's platform
 
----
-
-## SECTION 4 — CONTENT VELOCITY SIGNALS
-*Each of the top 3 stories from above that represent the strongest opportunity for 
-Syntrii thought leadership — a LinkedIn post, IAG article pitch, or client briefing hook.*
-
-For each, provide:
-- The story headline
-- A suggested Syntrii content angle (1–2 sentences on how Matt or Laurent could own 
-  the narrative from a platform or advisory perspective)
-- Suggested format: LinkedIn post / IAG article / client briefing note
-
----
-
-FORMAT INSTRUCTIONS:
-- Output clean HTML only — no markdown, no code fences
-- Use <h2> for section headers, <h3> for story headlines
-- Wrap each story's Syntrii Angle in: <div class="angle"><strong>Syntrii Angle:</strong> ...</div>
-- Wrap each Source in: <p class="source"><strong>Source:</strong> <a href="URL">Publication Name</a></p>
-- Keep the total report to the top 18–20 most significant stories across all sections
-- Be concise and commercial — this is for a CCO and CEO, not an academic
+TOPIC D — CONTENT VELOCITY:
+- From all research above, identify the 5 stories with the strongest thought leadership
+  potential for Syntrii — where Matt or Laurent could own the narrative publicly via
+  LinkedIn, Inside Asian Gaming, or a client briefing note.
+- For each, note: why it matters to Syntrii's positioning and suggested content format.
 """
 
 # ─────────────────────────────────────────────
-# FETCH DIGEST FROM CLAUDE
+# WRITING PROMPTS — no web search, pure HTML
+# ─────────────────────────────────────────────
+
+def build_writing_prompt_part1(raw_research: str) -> str:
+    return f"""
+You are producing a weekly intelligence email for Syntrii's CCO and CEO.
+
+Using ONLY the research notes below, write clean HTML for SECTION 1 and SECTION 2.
+Do not search for additional information. Do not add commentary or preamble.
+Output HTML only — no markdown, no code fences.
+
+FORMAT PER STORY:
+<h3>[Headline]</h3>
+<p>[2–3 concise sentences covering what happened, who is involved, and why it matters.]</p>
+<div class="angle"><strong>Syntrii Angle:</strong> [2–3 sentences on commercial or strategic 
+relevance to Syntrii's pipeline: Mounties Group AU, Solaire Philippines, Okada Manila, 
+Angel Gaming, Bally's Corporation, or Syntrii's platform positioning.]</div>
+<p class="source"><strong>Source:</strong> <a href="URL">Publication Name</a></p>
+
+Use <h2> for section titles. Write 4–5 stories per section. Pick the most significant.
+
+---
+
+RAW RESEARCH NOTES:
+{raw_research}
+
+---
+
+Now produce the following two sections in full:
+
+<h2>Section 1 — Platforms &amp; Products</h2>
+[4–5 stories from Topic A]
+
+<h2>Section 2 — Strategic Advisory</h2>
+[4–5 stories from Topic B]
+"""
+
+
+def build_writing_prompt_part2(raw_research: str) -> str:
+    return f"""
+You are producing a weekly intelligence email for Syntrii's CCO and CEO.
+
+Using ONLY the research notes below, write clean HTML for SECTION 3 and SECTION 4.
+Do not search for additional information. Do not add commentary or preamble.
+Output HTML only — no markdown, no code fences.
+
+SECTION 3 FORMAT PER STORY:
+<h3>[Headline]</h3>
+<p>[2–3 concise sentences covering what happened, who is involved, and why it matters.]</p>
+<div class="angle"><strong>Syntrii Angle:</strong> [2–3 sentences on commercial or strategic 
+relevance to Syntrii's pipeline: Mounties Group AU, Solaire Philippines, Okada Manila, 
+Angel Gaming, Bally's Corporation, or Syntrii's platform positioning.]</div>
+<p class="source"><strong>Source:</strong> <a href="URL">Publication Name</a></p>
+
+SECTION 4 FORMAT — wrap the entire section in <div class="velocity">:
+<h3>[Story headline]</h3>
+<p>[2 sentences: the Syntrii content angle — how Matt or Laurent owns this narrative 
+from a platform or advisory perspective.]</p>
+<p><strong>Format:</strong> [LinkedIn post / IAG article / client briefing note]</p>
+
+Use <h2> for section titles. Write 4–5 stories in Section 3. Write 3 items in Section 4.
+
+---
+
+RAW RESEARCH NOTES:
+{raw_research}
+
+---
+
+Now produce the following two sections in full:
+
+<h2>Section 3 — Growth &amp; Innovation / Ventures</h2>
+[4–5 stories from Topic C]
+
+<div class="velocity">
+<h2>Section 4 — Content Velocity Signals</h2>
+[3 items from Topic D]
+</div>
+"""
+
+# ─────────────────────────────────────────────
+# API HELPERS — with rate limit retry
+# ─────────────────────────────────────────────
+
+def api_call_with_retry(create_fn, max_retries: int = 5) -> str:
+    """Call the Anthropic API, retrying with backoff on rate limit errors."""
+    wait = 30
+    for attempt in range(max_retries):
+        try:
+            response = create_fn()
+            return "".join(b.text for b in response.content if b.type == "text")
+        except anthropic.RateLimitError:
+            if attempt < max_retries - 1:
+                print(f"  → Rate limit hit. Waiting {wait}s before retry {attempt + 2}/{max_retries}...")
+                time.sleep(wait)
+                wait += 30
+            else:
+                raise
+
+
+def research(prompt: str) -> str:
+    """Web search call — gathers raw intel."""
+    client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+    return api_call_with_retry(lambda: client.messages.create(
+        model="claude-sonnet-4-6",
+        max_tokens=8000,
+        tools=[{"type": "web_search_20250305", "name": "web_search"}],
+        messages=[{"role": "user", "content": prompt}],
+    ))
+
+
+def write_html(prompt: str) -> str:
+    """Writing call — no web search, pure HTML from research notes."""
+    client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+    return api_call_with_retry(lambda: client.messages.create(
+        model="claude-sonnet-4-6",
+        max_tokens=8000,
+        messages=[{"role": "user", "content": prompt}],
+    ))
+
+# ─────────────────────────────────────────────
+# FETCH DIGEST — 4 calls
 # ─────────────────────────────────────────────
 
 def fetch_digest() -> str:
-    client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+    print("  → [1/4] Researching Sections 1 & 2 (Platforms, Advisory)...")
+    raw1 = research(build_research_prompt_part1())
 
-    response = client.messages.create(
-        model="claude-sonnet-4-6",
-        max_tokens=6000,
-        tools=[{"type": "web_search_20250305", "name": "web_search"}],
-        messages=[{"role": "user", "content": build_prompt()}],
-    )
+    print("  → [2/4] Writing Sections 1 & 2 HTML...")
+    html1 = write_html(build_writing_prompt_part1(raw1))
 
-    html_content = ""
-    for block in response.content:
-        if block.type == "text":
-            html_content += block.text
+    print("  → [3/4] Researching Sections 3 & 4 (Growth, Content Velocity)...")
+    raw2 = research(build_research_prompt_part2())
 
-    return html_content
+    print("  → [4/4] Writing Sections 3 & 4 HTML...")
+    html2 = write_html(build_writing_prompt_part2(raw2))
+
+    return html1 + "\n" + html2
 
 # ─────────────────────────────────────────────
 # BUILD EMAIL
@@ -281,6 +380,11 @@ if __name__ == "__main__":
 # README — SETUP INSTRUCTIONS
 # ═══════════════════════════════════════════════════════════
 #
+# REQUIRES: Anthropic API Tier 2 ($40 total spend)
+#   → console.anthropic.com/settings/billing
+#   Tier 2 gives 1M input tokens/min and 16K output tokens/min on Sonnet —
+#   sufficient for all 4 API calls without rate limit issues.
+#
 # STEP 1 — Anthropic API key
 #   → console.anthropic.com → Settings → API Keys → Create Key
 #
@@ -333,7 +437,8 @@ if __name__ == "__main__":
 #
 # ─────────────────────────────────────────────────────────
 # ESTIMATED COST
-#   ~$0.20–0.40 per run (more searches, larger output)
-#   ~$1–2/month total
+#   ~$1.50–2.00 per run (4 API calls, 8k tokens each)
+#   ~$6–8/month total
+#   Run time: ~3–5 minutes
 #   GitHub Actions: free on private repos (2,000 mins/month)
 # ─────────────────────────────────────────────────────────
