@@ -175,7 +175,6 @@ def fetch_digest() -> str:
         tools=[{
             "type": "web_search_20250305",
             "name": "web_search",
-            "max_uses": 25,                        # allows thorough research across all pillars
         }],
         messages=[{"role": "user", "content": build_prompt()}],
     )
