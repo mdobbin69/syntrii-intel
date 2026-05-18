@@ -8,7 +8,7 @@ A single aggregated weekly report covering all three Syntrii pillars:
 
 Delivered every Monday morning (AEST) via email.
 
-Architecture (Tier 2 API):
+Architecture: 4 API calls
   Call 1 — Research Sections 1 & 2 (web search, raw intel)
   Call 2 — Write Sections 1 & 2 HTML (no web search)
   Call 3 — Research Sections 3 & 4 (web search, raw intel)
@@ -26,7 +26,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 # ─────────────────────────────────────────────
-# CONFIGURATION — edit these before first run
+# CONFIGURATION
 # ─────────────────────────────────────────────
 
 RECIPIENT_EMAILS = [
@@ -42,7 +42,7 @@ SMTP_PORT       = 587
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
 
 # ─────────────────────────────────────────────
-# RESEARCH PROMPTS — web search, raw intel output
+# RESEARCH PROMPTS — minimal searches, maximum signal
 # ─────────────────────────────────────────────
 
 def build_research_prompt_part1() -> str:
@@ -51,36 +51,20 @@ def build_research_prompt_part1() -> str:
     week_end   = today.strftime("%B %d, %Y")
 
     return f"""
-Today is {week_end}. You are a senior intelligence analyst for Syntrii — a digital utility 
-platform purpose-built for the global gaming, entertainment, and hospitality sector.
-Syntrii's key clients and pipeline: Mounties Group AU, Solaire Philippines, Okada Manila, 
-Angel Gaming, Bally's Corporation.
+Today is {week_end}. You are a senior intelligence analyst for Syntrii.
 
-Search the web and gather the most significant news from {week_start} – {week_end} 
-across the following topics. Output raw research notes — bullet points, no HTML.
-Find 5 strong stories per topic area. Include source name and URL for each story.
+Search the web for the most significant gaming industry news from {week_start} – {week_end}.
+Run a MAXIMUM of 6 searches total for this entire response.
+Output bullet point research notes only — no HTML. Include source name and URL per story.
 
-TOPIC A — PLATFORMS & PRODUCTS:
-- Cashless gaming technology deployments globally: IGT, Everi, Aristocrat NRT, Konami 
-  Money Klip, Paysign, Sightline, Acres Manufacturing — who is going live, where, with what
-- Loyalty, CRM, and CDP platform moves: Xtremepush, Optimove, Light & Wonder, Fast Track,
-  Salesforce Gaming — new features, partnerships, operator wins/losses
-- Vendor landscape: Angel Gaming, Walker Digital Table Systems (WDTS), Bally's Corporation,
-  LGT — any product launches, operator wins, partnership announcements
-- Middleware and integration layer: any vendor positioning as the connective tissue between
-  GMS, loyalty, payments, and compliance systems
-- AI applied to gaming loyalty personalisation, player development, or compliance
-- Australia 2028 cashless reform: regulator guidance, vendor certification, club procurement
+Search 1-3: Cover PLATFORMS & PRODUCTS
+Find the top 4 stories across: cashless gaming (IGT, Everi, Aristocrat, Konami, Acres),
+loyalty/CRM/CDP (Xtremepush, Optimove, Light & Wonder), middleware/integration layer vendors,
+AI in gaming loyalty or compliance, Australia 2028 cashless reform.
 
-TOPIC B — STRATEGIC ADVISORY:
-- AUSTRAC regulatory updates, enforcement actions, AML/CTF reform implementation
-- Mounties Group — any news related to AUSTRAC proceedings or compliance
-- ClubsNSW, NICC, state gaming regulators — policy announcements
-- PAGCOR — licensing, AML enforcement, KYC rules, e-wallet decisions, advertising bans
-- Solaire Resort, Okada Manila — strategy, results, technology investments, compliance moves
-- Star Entertainment, Crown, SkyCity — governance, results, regulatory news
-- FATF AML/CTF updates, MAS Singapore, DICJ Macau — any new IR frameworks
-- G2E Asia, ICE, ASEAN Gaming Summit — conference news and announcements
+Search 4-6: Cover STRATEGIC ADVISORY
+Find the top 4 stories across: AUSTRAC and Mounties Group, ClubsNSW/NICC regulatory updates,
+PAGCOR/Solaire/Okada news, Star Entertainment/Crown/SkyCity, FATF/MAS Singapore/DICJ Macau.
 """
 
 
@@ -90,32 +74,21 @@ def build_research_prompt_part2() -> str:
     week_end   = today.strftime("%B %d, %Y")
 
     return f"""
-Today is {week_end}. You are a senior intelligence analyst for Syntrii — a digital utility 
-platform purpose-built for the global gaming, entertainment, and hospitality sector.
-Syntrii's key clients and pipeline: Mounties Group AU, Solaire Philippines, Okada Manila, 
-Angel Gaming, Bally's Corporation.
+Today is {week_end}. You are a senior intelligence analyst for Syntrii.
 
-Search the web and gather the most significant news from {week_start} – {week_end} 
-across the following topics. Output raw research notes — bullet points, no HTML.
-Find 5 strong stories per topic area. Include source name and URL for each story.
+Search the web for the most significant gaming industry news from {week_start} – {week_end}.
+Run a MAXIMUM of 6 searches total for this entire response.
+Output bullet point research notes only — no HTML. Include source name and URL per story.
 
-TOPIC C — GROWTH & INNOVATION / VENTURES:
-- Gaming technology M&A and venture funding — who is raising, who is being acquired,
-  at what multiples, and what it signals about sector consolidation
-- New IR market openings: Japan, Thailand, UAE, Saudi Arabia, Vietnam, South Korea —
-  regulatory milestones, operator announcements, licensing progress
-- Emerging technology: digital wallets, biometric identity, embedded finance, open banking
-  applied to gaming environments
-- Adjacent sector entrants: fintech, regtech, or identity verification vendors moving into
-  gaming compliance or loyalty
-- Innovation from retail loyalty, sports betting, or financial services applicable to gaming
-- Potential partnership or acquisition targets relevant to Syntrii's platform
+Search 1-3: Cover GROWTH & INNOVATION
+Find the top 4 stories across: gaming technology M&A and venture funding, new IR market
+progress (Japan, Thailand, UAE, Saudi Arabia, Vietnam), digital wallets and biometric
+identity in gaming, fintech/regtech vendors entering gaming compliance or loyalty.
 
-TOPIC D — CONTENT VELOCITY:
-- From all research above, identify the 5 stories with the strongest thought leadership
-  potential for Syntrii — where Matt or Laurent could own the narrative publicly via
-  LinkedIn, Inside Asian Gaming, or a client briefing note.
-- For each, note: why it matters to Syntrii's positioning and suggested content format.
+Search 4-6: Cover CONTENT VELOCITY
+From all research above, identify the 3 strongest stories for Syntrii thought leadership —
+where Matt or Laurent could own the narrative via LinkedIn, Inside Asian Gaming, or a
+client briefing. Note why it matters and suggested format for each.
 """
 
 # ─────────────────────────────────────────────
@@ -125,77 +98,64 @@ TOPIC D — CONTENT VELOCITY:
 def build_writing_prompt_part1(raw_research: str) -> str:
     return f"""
 You are producing a weekly intelligence email for Syntrii's CCO and CEO.
+Syntrii's key clients: Mounties Group AU, Solaire Philippines, Okada Manila, Angel Gaming, Bally's.
 
 Using ONLY the research notes below, write clean HTML for SECTION 1 and SECTION 2.
-Do not search for additional information. Do not add commentary or preamble.
-Output HTML only — no markdown, no code fences.
+Output HTML only — no markdown, no preamble, no commentary.
 
-FORMAT PER STORY:
+HTML pattern per story:
 <h3>[Headline]</h3>
-<p>[2–3 concise sentences covering what happened, who is involved, and why it matters.]</p>
-<div class="angle"><strong>Syntrii Angle:</strong> [2–3 sentences on commercial or strategic 
-relevance to Syntrii's pipeline: Mounties Group AU, Solaire Philippines, Okada Manila, 
-Angel Gaming, Bally's Corporation, or Syntrii's platform positioning.]</div>
+<p>[2–3 sentences: what happened, who is involved, why it matters.]</p>
+<div class="angle"><strong>Syntrii Angle:</strong> [2–3 sentences on relevance to Syntrii's clients or platform.]</div>
 <p class="source"><strong>Source:</strong> <a href="URL">Publication Name</a></p>
 
-Use <h2> for section titles. Write 4–5 stories per section. Pick the most significant.
+Use <h2> for section titles. Write 4 stories per section.
 
 ---
-
-RAW RESEARCH NOTES:
+RAW RESEARCH:
 {raw_research}
-
 ---
-
-Now produce the following two sections in full:
 
 <h2>Section 1 — Platforms &amp; Products</h2>
-[4–5 stories from Topic A]
+[4 stories from Platforms & Products research]
 
 <h2>Section 2 — Strategic Advisory</h2>
-[4–5 stories from Topic B]
+[4 stories from Strategic Advisory research]
 """
 
 
 def build_writing_prompt_part2(raw_research: str) -> str:
     return f"""
 You are producing a weekly intelligence email for Syntrii's CCO and CEO.
+Syntrii's key clients: Mounties Group AU, Solaire Philippines, Okada Manila, Angel Gaming, Bally's.
 
 Using ONLY the research notes below, write clean HTML for SECTION 3 and SECTION 4.
-Do not search for additional information. Do not add commentary or preamble.
-Output HTML only — no markdown, no code fences.
+Output HTML only — no markdown, no preamble, no commentary.
 
-SECTION 3 FORMAT PER STORY:
+Section 3 HTML pattern per story:
 <h3>[Headline]</h3>
-<p>[2–3 concise sentences covering what happened, who is involved, and why it matters.]</p>
-<div class="angle"><strong>Syntrii Angle:</strong> [2–3 sentences on commercial or strategic 
-relevance to Syntrii's pipeline: Mounties Group AU, Solaire Philippines, Okada Manila, 
-Angel Gaming, Bally's Corporation, or Syntrii's platform positioning.]</div>
+<p>[2–3 sentences: what happened, who is involved, why it matters.]</p>
+<div class="angle"><strong>Syntrii Angle:</strong> [2–3 sentences on relevance to Syntrii's clients or platform.]</div>
 <p class="source"><strong>Source:</strong> <a href="URL">Publication Name</a></p>
 
-SECTION 4 FORMAT — wrap the entire section in <div class="velocity">:
+Section 4 HTML pattern — wrap entire section in <div class="velocity">:
 <h3>[Story headline]</h3>
-<p>[2 sentences: the Syntrii content angle — how Matt or Laurent owns this narrative 
-from a platform or advisory perspective.]</p>
+<p>[2 sentences: how Matt or Laurent owns this narrative publicly.]</p>
 <p><strong>Format:</strong> [LinkedIn post / IAG article / client briefing note]</p>
 
-Use <h2> for section titles. Write 4–5 stories in Section 3. Write 3 items in Section 4.
+Use <h2> for section titles. Write 4 stories in Section 3. Write 3 items in Section 4.
 
 ---
-
-RAW RESEARCH NOTES:
+RAW RESEARCH:
 {raw_research}
-
 ---
-
-Now produce the following two sections in full:
 
 <h2>Section 3 — Growth &amp; Innovation / Ventures</h2>
-[4–5 stories from Topic C]
+[4 stories from Growth & Innovation research]
 
 <div class="velocity">
 <h2>Section 4 — Content Velocity Signals</h2>
-[3 items from Topic D]
+[3 items from Content Velocity research]
 </div>
 """
 
@@ -204,7 +164,6 @@ Now produce the following two sections in full:
 # ─────────────────────────────────────────────
 
 def api_call_with_retry(create_fn, max_retries: int = 5) -> str:
-    """Call the Anthropic API, retrying with backoff on rate limit errors."""
     wait = 30
     for attempt in range(max_retries):
         try:
@@ -220,37 +179,35 @@ def api_call_with_retry(create_fn, max_retries: int = 5) -> str:
 
 
 def research(prompt: str) -> str:
-    """Web search call — gathers raw intel."""
     client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
     return api_call_with_retry(lambda: client.messages.create(
         model="claude-sonnet-4-6",
-        max_tokens=8000,
+        max_tokens=4000,
         tools=[{"type": "web_search_20250305", "name": "web_search"}],
         messages=[{"role": "user", "content": prompt}],
     ))
 
 
 def write_html(prompt: str) -> str:
-    """Writing call — no web search, pure HTML from research notes."""
     client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
     return api_call_with_retry(lambda: client.messages.create(
         model="claude-sonnet-4-6",
-        max_tokens=8000,
+        max_tokens=6000,
         messages=[{"role": "user", "content": prompt}],
     ))
 
 # ─────────────────────────────────────────────
-# FETCH DIGEST — 4 calls
+# FETCH DIGEST
 # ─────────────────────────────────────────────
 
 def fetch_digest() -> str:
-    print("  → [1/4] Researching Sections 1 & 2 (Platforms, Advisory)...")
+    print("  → [1/4] Researching Sections 1 & 2...")
     raw1 = research(build_research_prompt_part1())
 
     print("  → [2/4] Writing Sections 1 & 2 HTML...")
     html1 = write_html(build_writing_prompt_part1(raw1))
 
-    print("  → [3/4] Researching Sections 3 & 4 (Growth, Content Velocity)...")
+    print("  → [3/4] Researching Sections 3 & 4...")
     raw2 = research(build_research_prompt_part2())
 
     print("  → [4/4] Writing Sections 3 & 4 HTML...")
@@ -274,7 +231,6 @@ def build_email(digest_html: str) -> str:
         body       {{ font-family: 'Segoe UI', Arial, sans-serif; color: #111111;
                       max-width: 820px; margin: 0 auto; padding: 24px; }}
 
-        /* Header */
         .header    {{ background: #1A3A3F; padding: 20px 24px; margin-bottom: 8px; }}
         .header h1 {{ margin: 0; color: #ffffff; font-size: 22px; font-weight: 600;
                       letter-spacing: 0.5px; }}
@@ -282,27 +238,19 @@ def build_email(digest_html: str) -> str:
         .subhead   {{ background: #429DA6; color: #EAF5F6; padding: 8px 24px;
                       font-size: 13px; margin-bottom: 28px; }}
 
-        /* Section headers */
         h2         {{ color: #1A3A3F; border-bottom: 2px solid #429DA6;
                       padding-bottom: 6px; margin-top: 36px; font-size: 16px;
                       text-transform: uppercase; letter-spacing: 0.5px; }}
-
-        /* Story headers */
         h3         {{ color: #429DA6; margin-bottom: 4px; font-size: 15px; }}
-
-        /* Body text */
         p          {{ line-height: 1.65; margin: 6px 0; font-size: 14px; }}
 
-        /* Syntrii angle callout */
         .angle     {{ background: #EAF5F6; border-left: 4px solid #C9A227;
                       padding: 8px 14px; margin: 10px 0 4px 0; font-size: 13px;
                       color: #1A3A3F; }}
 
-        /* Source line */
         .source    {{ font-size: 12px; color: #888; margin: 2px 0 18px 0; }}
         .source a  {{ color: #429DA6; text-decoration: none; }}
 
-        /* Content velocity section */
         .velocity  {{ background: #1A3A3F; color: #EAF5F6; padding: 16px 20px;
                       margin-top: 36px; }}
         .velocity h2 {{ color: #C9A227; border-bottom: 1px solid #429DA6;
@@ -310,7 +258,6 @@ def build_email(digest_html: str) -> str:
         .velocity h3 {{ color: #ffffff; font-size: 14px; }}
         .velocity p  {{ font-size: 13px; color: #EAF5F6; }}
 
-        /* Footer */
         .footer    {{ margin-top: 40px; padding-top: 16px; border-top: 1px solid #ddd;
                       font-size: 11px; color: #aaa; }}
       </style>
@@ -380,11 +327,6 @@ if __name__ == "__main__":
 # README — SETUP INSTRUCTIONS
 # ═══════════════════════════════════════════════════════════
 #
-# REQUIRES: Anthropic API Tier 2 ($40 total spend)
-#   → console.anthropic.com/settings/billing
-#   Tier 2 gives 1M input tokens/min and 16K output tokens/min on Sonnet —
-#   sufficient for all 4 API calls without rate limit issues.
-#
 # STEP 1 — Anthropic API key
 #   → console.anthropic.com → Settings → API Keys → Create Key
 #
@@ -437,8 +379,8 @@ if __name__ == "__main__":
 #
 # ─────────────────────────────────────────────────────────
 # ESTIMATED COST
-#   ~$1.50–2.00 per run (4 API calls, 8k tokens each)
-#   ~$6–8/month total
-#   Run time: ~3–5 minutes
+#   ~$1.00–1.50 per run (4 API calls)
+#   ~$4–6/month total
+#   Run time: ~3–4 minutes
 #   GitHub Actions: free on private repos (2,000 mins/month)
 # ─────────────────────────────────────────────────────────
