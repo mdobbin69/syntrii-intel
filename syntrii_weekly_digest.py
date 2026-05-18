@@ -35,10 +35,11 @@ SMTP_PORT       = 587
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
 
 # ─────────────────────────────────────────────
-# RESEARCH PROMPT
+# RESEARCH PROMPTS — split across two API calls
+# to ensure all four sections complete fully
 # ─────────────────────────────────────────────
 
-def build_prompt() -> str:
+def build_prompt_part1() -> str:
     today      = date.today()
     week_start = (today - timedelta(days=7)).strftime("%B %d")
     week_end   = today.strftime("%B %d, %Y")
@@ -49,12 +50,12 @@ platform purpose-built for the global gaming, entertainment, and hospitality sec
 Syntrii operates across three pillars: Platforms & Products, Strategic Advisory, and 
 Growth & Innovation.
 
-Search the web and produce a structured WEEKLY intelligence briefing covering the past 
-7 days ({week_start} – {week_end}). 
+Search the web and produce the FIRST HALF of a weekly intelligence briefing covering 
+the past 7 days ({week_start} – {week_end}).
 
-The report has four sections. Cover the most significant 4–5 stories per section. 
-For each story write 2–3 concise sentences, a Source URL, and a "Syntrii Angle" — 
-one line on commercial or strategic relevance to Syntrii's pipeline 
+This call covers SECTION 1 and SECTION 2 only. Cover the most significant 4–5 stories 
+per section. For each story write 2–3 concise sentences, a Source URL, and a 
+"Syntrii Angle" — one line on commercial or strategic relevance to Syntrii's pipeline 
 (Mounties Group AU, Solaire Philippines, Angel Gaming, Okada, Bally's Corporation) 
 or platform positioning.
 
@@ -121,6 +122,39 @@ Search for and cover:
 
 ---
 
+FORMAT INSTRUCTIONS:
+- Output clean HTML only — no markdown, no code fences
+- Use <h2> for section headers, <h3> for story headlines
+- Wrap each story's Syntrii Angle in: <div class="angle"><strong>Syntrii Angle:</strong> ...</div>
+- Wrap each Source in: <p class="source"><strong>Source:</strong> <a href="URL">Publication Name</a></p>
+- Target 4–5 stories per section — quality over volume
+- Be concise and commercial — this is for a CCO and CEO, not an academic
+- Do NOT include any header, footer, or preamble — output the two section blocks only
+"""
+
+
+def build_prompt_part2() -> str:
+    today      = date.today()
+    week_start = (today - timedelta(days=7)).strftime("%B %d")
+    week_end   = today.strftime("%B %d, %Y")
+
+    return f"""
+Today is {week_end}. You are a senior intelligence analyst for Syntrii — a digital utility 
+platform purpose-built for the global gaming, entertainment, and hospitality sector. 
+Syntrii operates across three pillars: Platforms & Products, Strategic Advisory, and 
+Growth & Innovation.
+
+Search the web and produce the SECOND HALF of a weekly intelligence briefing covering 
+the past 7 days ({week_start} – {week_end}).
+
+This call covers SECTION 3 and SECTION 4 only. Cover the most significant 4–5 stories 
+in Section 3. For each story write 2–3 concise sentences, a Source URL, and a 
+"Syntrii Angle" — one line on commercial or strategic relevance to Syntrii's pipeline 
+(Mounties Group AU, Solaire Philippines, Angel Gaming, Okada, Bally's Corporation) 
+or platform positioning.
+
+---
+
 ## SECTION 3 — GROWTH & INNOVATION / VENTURES
 *Deal flow, emerging technology, and market entry signals.*
 
@@ -141,7 +175,7 @@ Search for and cover:
 ---
 
 ## SECTION 4 — CONTENT VELOCITY SIGNALS
-*Each of the top 3 stories from above that represent the strongest opportunity for 
+*The top 3 stories from Sections 1–3 that represent the strongest opportunity for 
 Syntrii thought leadership — a LinkedIn post, IAG article pitch, or client briefing hook.*
 
 For each, provide:
@@ -150,6 +184,8 @@ For each, provide:
   the narrative from a platform or advisory perspective)
 - Suggested format: LinkedIn post / IAG article / client briefing note
 
+Wrap Section 4 in: <div class="velocity">...</div>
+
 ---
 
 FORMAT INSTRUCTIONS:
@@ -157,26 +193,26 @@ FORMAT INSTRUCTIONS:
 - Use <h2> for section headers, <h3> for story headlines
 - Wrap each story's Syntrii Angle in: <div class="angle"><strong>Syntrii Angle:</strong> ...</div>
 - Wrap each Source in: <p class="source"><strong>Source:</strong> <a href="URL">Publication Name</a></p>
-- Keep the total report to the top 18–20 most significant stories across all sections
-- Target 4–5 stories per section — quality over volume
+- Target 4–5 stories in Section 3, 3 items in Section 4
 - Be concise and commercial — this is for a CCO and CEO, not an academic
+- Do NOT include any header, footer, or preamble — output the two section blocks only
 """
 
 # ─────────────────────────────────────────────
-# FETCH DIGEST FROM CLAUDE
+# FETCH DIGEST FROM CLAUDE — two calls joined
 # ─────────────────────────────────────────────
 
-def fetch_digest() -> str:
+def fetch_section(prompt: str) -> str:
     client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
 
     response = client.messages.create(
         model="claude-sonnet-4-6",
-        max_tokens=16000,                          # increased from 8000 to prevent truncation
+        max_tokens=8000,
         tools=[{
             "type": "web_search_20250305",
             "name": "web_search",
         }],
-        messages=[{"role": "user", "content": build_prompt()}],
+        messages=[{"role": "user", "content": prompt}],
     )
 
     html_content = ""
@@ -185,6 +221,16 @@ def fetch_digest() -> str:
             html_content += block.text
 
     return html_content
+
+
+def fetch_digest() -> str:
+    print("  → Researching Sections 1 & 2 (Platforms, Advisory)...")
+    part1 = fetch_section(build_prompt_part1())
+
+    print("  → Researching Sections 3 & 4 (Growth, Content Velocity)...")
+    part2 = fetch_section(build_prompt_part2())
+
+    return part1 + "\n" + part2
 
 # ─────────────────────────────────────────────
 # BUILD EMAIL
@@ -360,7 +406,7 @@ if __name__ == "__main__":
 #
 # ─────────────────────────────────────────────────────────
 # ESTIMATED COST
-#   ~$0.40–0.70 per run (more searches, larger output budget)
-#   ~$1.50–3/month total
+#   ~$0.50–0.80 per run (two API calls, 8k tokens each)
+#   ~$2–3/month total
 #   GitHub Actions: free on private repos (2,000 mins/month)
 # ─────────────────────────────────────────────────────────
