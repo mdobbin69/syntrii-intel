@@ -183,7 +183,12 @@ def research(prompt: str) -> str:
     return api_call_with_retry(lambda: client.messages.create(
         model="claude-sonnet-4-6",
         max_tokens=4000,
-        tools=[{"type": "web_search_20250305", "name": "web_search"}],
+        tools=[{
+            "type": "web_search_20250305",
+            "name": "web_search",
+            "max_uses": 5,                  # cap searches to limit context consumption
+            "max_content_tokens": 800,       # limit tokens per search result
+        }],
         messages=[{"role": "user", "content": prompt}],
     ))
 
