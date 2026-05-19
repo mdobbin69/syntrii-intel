@@ -129,16 +129,21 @@ def build_writing_prompt_part2(raw_research: str) -> str:
 You are producing a weekly intelligence email for Syntrii's CCO and CEO.
 Syntrii's key clients: Mounties Group AU, Solaire Philippines, Okada Manila, Angel Gaming, Bally's.
 
-Using ONLY the research notes below, write clean HTML for SECTION 3 only.
+Using ONLY the research notes below, write clean HTML for SECTION 3 and SECTION 4.
 Output HTML only — no markdown, no preamble, no commentary.
 
-HTML pattern per story:
+Section 3 HTML pattern per story:
 <h3>[Headline]</h3>
 <p>[2–3 sentences: what happened, who is involved, why it matters.]</p>
 <div class="angle"><strong>Syntrii Angle:</strong> [2–3 sentences on relevance to Syntrii's clients or platform.]</div>
 <p class="source"><strong>Source:</strong> <a href="URL">Publication Name</a></p>
 
-Use <h2> for the section title. Write 4 stories.
+Section 4 HTML pattern — wrap entire section in <div class="velocity">:
+<h3>[Story headline]</h3>
+<p>[2 sentences: how Matt or Laurent owns this narrative publicly.]</p>
+<p><strong>Format:</strong> [LinkedIn post / IAG article / client briefing note]</p>
+
+Use <h2> for section titles. Write 4 stories in Section 3. Write 3 items in Section 4.
 
 ---
 RAW RESEARCH:
@@ -147,33 +152,10 @@ RAW RESEARCH:
 
 <h2>Section 3 — Growth &amp; Innovation / Ventures</h2>
 [4 stories from Growth & Innovation research]
-"""
-
-
-def build_writing_prompt_part3(raw_research: str) -> str:
-    return f"""
-You are producing a weekly intelligence email for Syntrii's CCO and CEO.
-Syntrii's key clients: Mounties Group AU, Solaire Philippines, Okada Manila, Angel Gaming, Bally's.
-
-Using ONLY the research notes below, write clean HTML for SECTION 4 — Content Velocity Signals.
-Output HTML only — no markdown, no preamble, no commentary.
-Wrap the entire output in <div class="velocity">...</div>
-
-HTML pattern per item:
-<h3>[Story headline]</h3>
-<p>[2 sentences: how Matt or Laurent owns this narrative publicly.]</p>
-<p><strong>Format:</strong> [LinkedIn post / IAG article / client briefing note]</p>
-
-Write exactly 3 items. Use <h2> for the section title.
-
----
-RAW RESEARCH:
-{raw_research}
----
 
 <div class="velocity">
 <h2>Section 4 — Content Velocity Signals</h2>
-[3 items drawn from the strongest stories in the research]
+[3 items from Content Velocity research]
 </div>
 """
 
@@ -219,22 +201,19 @@ def write_html(prompt: str) -> str:
 # ─────────────────────────────────────────────
 
 def fetch_digest() -> str:
-    print("  → [1/5] Researching Sections 1 & 2...")
+    print("  → [1/4] Researching Sections 1 & 2...")
     raw1 = research(build_research_prompt_part1())
 
-    print("  → [2/5] Writing Sections 1 & 2 HTML...")
+    print("  → [2/4] Writing Sections 1 & 2 HTML...")
     html1 = write_html(build_writing_prompt_part1(raw1))
 
-    print("  → [3/5] Researching Sections 3 & 4...")
+    print("  → [3/4] Researching Sections 3 & 4...")
     raw2 = research(build_research_prompt_part2())
 
-    print("  → [4/5] Writing Section 3 HTML...")
+    print("  → [4/4] Writing Sections 3 & 4 HTML...")
     html2 = write_html(build_writing_prompt_part2(raw2))
 
-    print("  → [5/5] Writing Section 4 HTML...")
-    html3 = write_html(build_writing_prompt_part3(raw2))
-
-    return html1 + "\n" + html2 + "\n" + html3
+    return html1 + "\n" + html2
 
 # ─────────────────────────────────────────────
 # BUILD EMAIL
