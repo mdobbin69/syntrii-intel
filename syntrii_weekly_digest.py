@@ -143,7 +143,7 @@ Section 4 HTML pattern — wrap entire section in <div class="velocity">:
 <p>[2 sentences: how Matt or Laurent owns this narrative publicly.]</p>
 <p><strong>Format:</strong> [LinkedIn post / IAG article / client briefing note]</p>
 
-Use <h2> for section titles. Write 4 stories in Section 3. Write 3 items in Section 4.
+Use <h2> for section titles. Write 3 stories in Section 3. Write 3 items in Section 4.
 
 ---
 RAW RESEARCH:
@@ -151,7 +151,7 @@ RAW RESEARCH:
 ---
 
 <h2>Section 3 — Growth &amp; Innovation / Ventures</h2>
-[4 stories from Growth & Innovation research]
+[3 stories from Growth & Innovation research]
 
 <div class="velocity">
 <h2>Section 4 — Content Velocity Signals</h2>
