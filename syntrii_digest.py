@@ -59,6 +59,8 @@ Per story:
 <p class="source"><strong>Source:</strong> <a href="URL">Publication</a></p>
 
 4 stories per section. Use <h2> for section titles.
+Section 1 title MUST be "Platforms & Products".
+Section 2 title MUST be "Strategic Advisory".
 
 RESEARCH NOTES:
 {raw}"""
@@ -69,12 +71,12 @@ Clients: Mounties Group AU, Solaire Philippines, Okada Manila, Angel Gaming, Bal
 
 Using ONLY the notes below, output clean HTML for Section 3 and Section 4. No markdown, no preamble.
 
-Section 3 — 3 stories. EVERY story MUST follow this exact pattern:
+Section 3 — title MUST be "Growth & Innovation / Ventures". 3 stories. EVERY story MUST follow this exact pattern:
 <h3>Headline</h3>
 <p>2-3 sentences on what happened and why it matters.</p>
 <div class="angle"><strong>Syntrii Angle:</strong> 2-3 sentences on relevance to Syntrii's clients or platform.</div>
 <p class="source"><strong>Source:</strong> <a href="URL">Publication</a></p>
-Section 4 — wrap in <div class="velocity">, 3 items each with:
+Section 4 — title MUST be "Content Velocity Signals". Wrap entire section in <div class="velocity">, 3 items each with:
 <h3>Story headline</h3>
 <p>How Matt or Laurent owns this narrative publicly.</p>
 <p><strong>Format:</strong> LinkedIn post / IAG article / client briefing note</p>
