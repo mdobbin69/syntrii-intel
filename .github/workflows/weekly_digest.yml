@@ -12,7 +12,6 @@ jobs:
         with:
           python-version: '3.11'
       - run: pip install anthropic
-      - run: cat syntrii_weekly_digest.py | grep model
       - run: python syntrii_digest.py
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
