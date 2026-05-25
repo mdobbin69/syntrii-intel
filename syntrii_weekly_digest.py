@@ -87,8 +87,8 @@ identity in gaming, fintech/regtech vendors entering gaming compliance or loyalt
 
 Search 4-6: Cover CONTENT VELOCITY
 From all research above, identify the 3 strongest stories for Syntrii thought leadership —
-where Matt or Laurent could own the narrative via LinkedIn, Inside Asian Gaming, or a
-client briefing. Note why it matters and suggested format for each.
+where Matt or Laurent could own the narrative publicly. Note why it matters and suggested
+format for each.
 """
 
 # ─────────────────────────────────────────────
@@ -183,12 +183,7 @@ def research(prompt: str) -> str:
     return api_call_with_retry(lambda: client.messages.create(
         model="claude-sonnet-4-6",
         max_tokens=4000,
-        tools=[{
-            "type": "web_search_20250305",
-            "name": "web_search",
-            "max_uses": 5,                  # cap searches to limit context consumption
-            "max_content_tokens": 800,       # limit tokens per search result
-        }],
+        tools=[{"type": "web_search_20250305", "name": "web_search"}],
         messages=[{"role": "user", "content": prompt}],
     ))
 
