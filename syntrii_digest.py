@@ -69,7 +69,11 @@ Clients: Mounties Group AU, Solaire Philippines, Okada Manila, Angel Gaming, Bal
 
 Using ONLY the notes below, output clean HTML for Section 3 and Section 4. No markdown, no preamble.
 
-Section 3 — 3 stories, same per-story pattern as Section 1 & 2.
+Section 3 — 3 stories. EVERY story MUST follow this exact pattern:
+<h3>Headline</h3>
+<p>2-3 sentences on what happened and why it matters.</p>
+<div class="angle"><strong>Syntrii Angle:</strong> 2-3 sentences on relevance to Syntrii's clients or platform.</div>
+<p class="source"><strong>Source:</strong> <a href="URL">Publication</a></p>
 Section 4 — wrap in <div class="velocity">, 3 items each with:
 <h3>Story headline</h3>
 <p>How Matt or Laurent owns this narrative publicly.</p>
